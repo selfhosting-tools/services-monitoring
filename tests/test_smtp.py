@@ -19,20 +19,7 @@ class Testsmtp(unittest.TestCase):
         """
         results = smtp.test({
             'host': 'smtp.gmail.com',
-            'port': 25,
-            'check_tlsa': False
-        })
-
-        self.assertEqual(len(results), 0)
-
-    def test_valid_tlsa(self):
-        """
-        Should work (TLSA check)
-        """
-        results = smtp.test({
-            'host': 'mail.ietf.org',
-            'port': 25,
-            'check_tlsa': True
+            'port': 587
         })
 
         self.assertEqual(len(results), 0)
@@ -43,8 +30,7 @@ class Testsmtp(unittest.TestCase):
         """
         results = smtp.test({
             'host': 'mail.example.com',
-            'port': 25,
-            'check_tlsa': False
+            'port': 587
         })
 
         self.assertTrue(len(results) > 0)
