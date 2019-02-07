@@ -1,0 +1,32 @@
+common:
+  delay: 600
+  debug: false
+
+probes:
+  raw_tcp:
+    - host: example.com
+      port: 22
+
+  https:
+    - url: http://example.com
+      redirection: true
+    - url: https://example.com
+      verify_certificate: false
+
+  smtp:
+    - host: mail.example.com
+      port: 25
+
+  dns:
+    - domain: example.com
+
+
+notifications:
+    email:
+      config:
+        recipient_address: 'root@localhost'
+        host: 'smtp.example.com'
+        port: 25
+        user: 'user'
+        password: 'password'
+        sender_address: 'monitoring@hostname'

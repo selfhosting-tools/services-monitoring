@@ -1,0 +1,6 @@
+dnspython
+pycodestyle
+pylint
+pyOpenSSL
+pyYAML
+requests

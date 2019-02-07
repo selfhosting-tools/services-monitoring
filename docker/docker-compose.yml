@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+
+  services-monitoring:
+    container_name: services-monitoring
+    restart: always
+    build:
+      context: services-monitoring
+      dockerfile: docker/Dockerfile
+    image: services-monitoring:latest
+    volumes:
+      - /data/services-monitoring/config:/config:ro
