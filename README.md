@@ -1,5 +1,7 @@
 # Services monitoring
 
+[![Build Status](https://travis-ci.org/selfhosting-tools/services-monitoring.svg?branch=master)](https://travis-ci.org/selfhosting-tools/services-monitoring)
+
 Python-based tool for monitoring the status of various services.
 
 ## Probes
