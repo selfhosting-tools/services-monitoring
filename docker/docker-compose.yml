@@ -10,4 +10,4 @@ services:
       dockerfile: docker/Dockerfile
     image: services-monitoring:latest
     volumes:
-      - /data/services-monitoring/config:/config:ro
+      - ./config:/config:ro
