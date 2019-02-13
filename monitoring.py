@@ -54,11 +54,12 @@ class ServicesMonitoring():
 
         # Set up logger
         log.basicConfig(
-            format="[{}]%(asctime)s:%(levelname)s:%(message)s".format(
+            format="[{}] %(asctime)s:%(levelname)s:%(message)s".format(
                 config_path
             ),
             datefmt='%Y-%m-%d %H:%M:%S',
-            level=log.DEBUG if self.config['common']['debug'] else log.INFO
+            level=log.DEBUG if self.config['common'].get('debug', False)
+            else log.INFO
         )
         log.debug(self.config)
 
