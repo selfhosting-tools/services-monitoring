@@ -124,7 +124,7 @@ class ServicesMonitoring():
             log.info("All services are up")
 
         # Send notifications
-        if send_notification and notifications:
+        if send_notification:
             self.send_notification(notifications=notifications)
 
     def manage_notifications(self, notifications):
