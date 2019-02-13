@@ -1,16 +1,21 @@
 language: python
-
 python:
   - "3.4"
   - "3.5"
   - "3.6"
 
+services:
+  - docker
+
 cache:
   - pip
+
 install:
   - pip install -r requirements.txt
+  - docker build -t services-monitoring:latest -f docker/Dockerfile .
 
 script:
   - pylint --rcfile=.pylintrc monitoring.py tools notification probes tests
   - pycodestyle monitoring.py tools notification probes tests
   - python -m unittest discover tests -v
+  - docker run --rm -it --entrypoint python services-monitoring:latest -m unittest discover tests -v
