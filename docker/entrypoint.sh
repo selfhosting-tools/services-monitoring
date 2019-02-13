@@ -17,11 +17,5 @@ do
     python -u monitoring.py -c $config_file &
 done
 
-# Forward SIGTERM to python
-trap 'pkill --signal SIGTERM python' SIGTERM
-
 # Don't exit
-while true
-do
-    sleep 600
-done
+sleep infinity
