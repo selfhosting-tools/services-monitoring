@@ -51,7 +51,7 @@ def test(service):
     domain = service['domain']
     ns_ips = service.get('ns_IPs', None)
     dnssec = service.get('dnssec', False)
-    service_name = "[dns] {}:".format(domain)
+    service_name = "[dns] {}".format(domain)
 
     # Auto-discover NS servers if not given
     if ns_ips is None:
@@ -72,10 +72,14 @@ def test(service):
             if response.rcode() != 0:
                 raise Exception('rcode is not 0')
         except Exception as resolver_exception:
-            results.append(Message(service_name,
-                                   "Failed to resolv domain (UDP mode): {}"
-                                   .format(resolver_exception),
-                                   Message.ERROR))
+            results.append(
+                Message(
+                    service_name,
+                    "Failed to resolv in UDP mode for ns {}: {}"
+                    .format(ns_ip, resolver_exception),
+                    Message.ERROR
+                )
+            )
 
         # TCP mode
         try:
@@ -83,9 +87,13 @@ def test(service):
             if response.rcode() != 0:
                 raise Exception('rcode is not 0')
         except Exception as resolver_exception:
-            results.append(Message(service_name,
-                                   "Failed to resolv domain (TCP mode): {}"
-                                   .format(resolver_exception),
-                                   Message.ERROR))
+            results.append(
+                Message(
+                    service_name,
+                    "Failed to resolv in TCP mode for ns {}: {}"
+                    .format(ns_ip, resolver_exception),
+                    Message.ERROR
+                )
+            )
 
         return results
