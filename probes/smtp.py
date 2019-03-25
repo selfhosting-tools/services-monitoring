@@ -14,12 +14,13 @@ Return:
 """
 
 import logging
+import smtplib
 from datetime import datetime, timedelta
 from re import match
-import smtplib
+
 import OpenSSL.crypto
 
-from tools import Message
+from tools import TLSA, Message
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ def test(service):
 
     host = service['host']
     port = service.get('port', 25)
-    # check_tlsa = service.get('check_tlsa', False)  # check 'tlsa' branch
+    check_tlsa = service.get('check_tlsa', False)
     service_name = "[smtp] {}:{}".format(host, port)
 
     # This list will store warnings or errors.
@@ -108,5 +109,9 @@ def test(service):
             "Certificate will expire in less than 72 hours",
             Message.ERROR
         ))
+
+    if check_tlsa:
+        tlsa_checker = TLSA(service_name)
+        results += tlsa_checker.check_tlsa(host, port, cert)
 
     return results

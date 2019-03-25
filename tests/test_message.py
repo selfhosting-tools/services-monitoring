@@ -1,7 +1,7 @@
 # Author: FL42
 
 """
-Tests for the tools module
+Tests for the message module
 """
 
 import unittest

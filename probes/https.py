@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 import requests
 import urllib3
 
-from tools import Message, tls
+from tools import TLSA, Message, tls
 
 log = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ def test(service):
 
     url = service['url']
     verify_certificate = service.get('verify_certificate', True)
-    # check_tlsa = service.get('check_tlsa', False)  # check 'tlsa' branch
+    check_tlsa = service.get('check_tlsa', False)
     redirection = service.get('redirection', False)
     service_name = "[https] {}".format(url)
 
@@ -89,7 +89,7 @@ def test(service):
 
     # For https check certificate expiration date and TLSA (if requested)
     parsed_url = urllib3.util.parse_url(url)
-    if parsed_url.scheme == 'https':
+    if parsed_url.scheme == 'https' and verify_certificate:
 
         # Get certificate
         port = parsed_url.port if parsed_url.port is not None else 443
@@ -131,5 +131,9 @@ def test(service):
                 "Certificate will expire in less than 7 days",
                 Message.WARNING
             ))
+
+        if check_tlsa:
+            tlsa_checker = TLSA(service_name)
+            results += tlsa_checker.check_tlsa(parsed_url.host, port, cert)
 
     return results
