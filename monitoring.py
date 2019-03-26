@@ -48,7 +48,7 @@ class ServicesMonitoring():
         # Parse config
         if config_path is not None:
             with open(config_path, 'rt') as config_file:
-                self.config = yaml.load(config_file)
+                self.config = yaml.safe_load(config_file)
         else:
             raise Exception('Path to config is required')
 
