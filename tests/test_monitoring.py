@@ -10,20 +10,6 @@ from monitoring import ServicesMonitoring
 from tools import Message
 
 
-class ServicesMonitoringTest(ServicesMonitoring):
-    """
-    Subclass of ServicesMonitoring used for testing without a config file
-    """
-    # We don't want to call the __init__ of the mother class
-    # pylint: disable=W0231
-    def __init__(self):
-        """
-        Define useful self variables
-        """
-        self.down_services = []
-    # pylint: enable=W0231
-
-
 class TestNotificationManagementLogic(unittest.TestCase):
     """
     Test self.manage_notifications()
@@ -33,7 +19,7 @@ class TestNotificationManagementLogic(unittest.TestCase):
         """
         Instantiate ServicesMonitoringTest class
         """
-        self.services_monitoring = ServicesMonitoringTest()
+        self.services_monitoring = ServicesMonitoring('unittest')
 
     def test_one_notification(self):
         """

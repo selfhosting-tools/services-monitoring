@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
-
 # Authors: alex2242 & FL42
 
 """
-usage: monitoring.py [-h] [-d] [-c CONFIG] [-n]
+usage: monitoring.py [-h] [-c CONFIG]
 
-Services monitoring
+Services Monitoring
 
 optional arguments:
   -h, --help            show this help message and exit
-  -d, --debug           Set log_level to DEBUG (default to INFO)
   -c CONFIG, --config CONFIG
                         Path to config file
-  -n, --no-notification
-                        Don't send notification messages
 """
 
 import argparse
-import logging as log
+import logging
+import signal
+import threading
+from sys import exit as sys_exit
 from time import sleep
 
 import yaml
@@ -29,7 +28,7 @@ from tools import Message
 version = "0.1"
 
 
-class ServicesMonitoring():
+class ServicesMonitoring(threading.Thread):
     """
     See module docstring.
     """
@@ -45,35 +44,57 @@ class ServicesMonitoring():
 
     def __init__(self, config_path):
 
+        # Init from mother class
+        threading.Thread.__init__(self)
+
+        # Set up logger
+        self.log = logging.getLogger(config_path)
+        self.log.setLevel(logging.INFO)
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(
+            logging.Formatter(
+                fmt="[{}] %(asctime)s:%(levelname)s:%(message)s".format(
+                    config_path
+                ),
+                datefmt='%Y-%m-%d %H:%M:%S'
+            )
+        )
+        self.log.addHandler(stream_handler)
+
+        # Initialize vars
+        self.config_path = config_path
+        self.config = None
+        # Store sent messages (prevent duplicate notifications)
+        self.down_services = []
+        self.exit_event = threading.Event()
+
+    def run(self):
+        """
+        Run method (see threading module)
+        """
+
         # Parse config
-        if config_path is not None:
-            with open(config_path, 'rt') as config_file:
+        if self.config_path is not None:
+            with open(self.config_path, 'rt') as config_file:
                 self.config = yaml.safe_load(config_file)
         else:
             raise Exception('Path to config is required')
 
-        # Set up logger
-        log.basicConfig(
-            format="[{}] %(asctime)s:%(levelname)s:%(message)s".format(
-                config_path
-            ),
-            datefmt='%Y-%m-%d %H:%M:%S',
-            level=log.DEBUG if self.config['common'].get('debug', False)
-            else log.INFO
+        # Set up loglevel
+        self.log.setLevel(
+            logging.DEBUG if self.config['common'].get('debug', False)
+            else logging.INFO
         )
-        log.debug(self.config)
 
         # Disable notifications if section is not defined
         send_notification = 'notifications' in self.config
 
-        # Store sent messages (prevent duplicate notifications)
-        self.down_services = []
-
         # Call self.monitor every 'delay' sec
-        while True:
+        while not self.exit_event.is_set():
             self.monitor(send_notification=send_notification)
-            log.debug("Waiting...")
-            sleep(self.config['common']['delay'])
+            self.log.debug("Waiting...")
+            self.exit_event.wait(self.config['common']['delay'])
+        self.log.info("Exited")
 
     def monitor(self, send_notification):
         """
@@ -92,14 +113,14 @@ class ServicesMonitoring():
         for probe_name in probe_names:
             probe_module = ServicesMonitoring.probe_mapping[probe_name]
             for service in config_probes[probe_name]:
-                log.debug("%s probe for %s", probe_name, str(service))
+                self.log.debug("%s probe for %s", probe_name, str(service))
                 # Retry probe one time in case of error or warning
                 # to avoid notification on one-time error.
                 for _ in range(2):
                     probes_results = probe_module.test(service)
                     if not probes_results:
                         break
-                    log.info(
+                    self.log.info(
                         "%s probe for %s returns %s",
                         probe_name,
                         str(service),
@@ -115,13 +136,13 @@ class ServicesMonitoring():
         if notifications:
             for message in notifications:
                 if message.severity == Message.WARNING:
-                    log.warning("%s: %s", message.service, message.body)
+                    self.log.warning("%s: %s", message.service, message.body)
                 elif message.severity == Message.ERROR:
-                    log.error("%s: %s", message.service, message.body)
+                    self.log.error("%s: %s", message.service, message.body)
                 else:
                     pass
         else:
-            log.info("All services are up")
+            self.log.info("All services are up")
 
         # Send notifications
         if send_notification:
@@ -159,9 +180,9 @@ class ServicesMonitoring():
                     )
                 )
                 self.down_services.remove(sent_message)
-                log.info("[service online] %s", str(sent_message))
+                self.log.info("[service online] %s", str(sent_message))
             else:
-                log.warning("[service down] %s", str(sent_message))
+                self.log.warning("[service down] %s", str(sent_message))
 
         return notifications_to_send
 
@@ -191,26 +212,47 @@ class ServicesMonitoring():
             )
 
             if mail_sent:
-                log.info("Notification mail sent")
+                self.log.info("Notification mail sent")
             else:
-                log.error("Fail to send notification mail")
+                self.log.error("Fail to send notification mail")
 
         else:
-            log.debug("notifications_to_send is empty")
+            self.log.debug("notifications_to_send is empty")
 
 
 if __name__ == '__main__':
 
     # Parse arguments
-    parser = argparse.ArgumentParser(description="Services monitoring")
-    parser.add_argument('-c', '--config',
-                        help="Path to config file")
+    parser = argparse.ArgumentParser(description="Services Monitoring")
+    parser.add_argument(
+        '-c', '--config',
+        help="Path to config file"
+    )
     args = parser.parse_args()
 
     # Print version at startup
     print("Services Monitoring V{}".format(version))
 
-    # Instantiate ServicesMonitoring class
+    # Handle signal
+    def exit_gracefully(sigcode, _frame):
+        """
+        Exit immediately gracefully
+        """
+        services_monitoring.log.info("Signal %d received", sigcode)
+        services_monitoring.log.info("Exiting gracefully now...")
+        services_monitoring.exit_event.set()
+        sys_exit(0)
+    signal.signal(signal.SIGINT, exit_gracefully)
+    signal.signal(signal.SIGTERM, exit_gracefully)
+
+    # Start Imap2Smtp thread
     services_monitoring = ServicesMonitoring(
         config_path=args.config
     )
+    services_monitoring.start()
+
+    while True:
+        if not services_monitoring.is_alive():
+            break
+        sleep(600)
+    sys_exit(1)
