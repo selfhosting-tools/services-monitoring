@@ -2,8 +2,14 @@ common:
   delay: 600
   debug: false
 
+
 probes:
+  ping:
+    - example.com
+    - 127.0.0.1
+
   raw_tcp:
+    # Comment
     - host: example.com
       port: 22
 
@@ -12,13 +18,16 @@ probes:
       redirection: true
     - url: https://example.com
       verify_certificate: false
+      check_tlsa: true
 
   smtp:
     - host: mail.example.com
       port: 25
+      check_tlsa: true
 
   dns:
     - domain: example.com
+      check_tlsa: true
 
 
 notifications:
