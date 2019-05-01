@@ -18,7 +18,7 @@ install:
   - docker build -t services-monitoring:latest -f docker/Dockerfile .
 
 script:
-  - pylint --rcfile=.pylintrc monitoring.py tools notification probes tests
-  - pycodestyle monitoring.py tools notification probes tests
+  - pylint --rcfile=.pylintrc monitoring.py docker/entrypoint.py tools notification probes tests
+  - pycodestyle monitoring.py docker/entrypoint.py tools notification probes tests
   - python -m unittest discover tests -v
   - docker run --rm -it --entrypoint python services-monitoring:latest -m unittest discover tests -v
