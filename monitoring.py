@@ -89,6 +89,16 @@ class ServicesMonitoring(threading.Thread):
         # Disable notifications if section is not defined
         send_notification = 'notifications' in self.config
 
+        # Send a test message
+        if send_notification \
+           and self.config['common'].get('email_at_startup', False):
+
+            email.send_email(
+                subject="Services-monitoring started",
+                body="This is a message sent at startup",
+                smtp_config=self.config['notifications']['email']['config']
+            )
+
         # Call self.monitor every 'delay' sec
         while not self.exit_event.is_set():
             self.monitor(send_notification=send_notification)
@@ -208,7 +218,7 @@ class ServicesMonitoring(threading.Thread):
             mail_sent = email.send_email(
                 subject="Monitoring alert!",
                 body=message_body,
-                config=self.config['notifications']['email']['config']
+                smtp_config=self.config['notifications']['email']['config']
             )
 
             if mail_sent:

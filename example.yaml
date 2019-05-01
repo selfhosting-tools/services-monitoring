@@ -1,6 +1,7 @@
 common:
   delay: 600
   debug: false
+  email_at_startup: false
 
 
 probes:
@@ -36,6 +37,7 @@ notifications:
         recipient_address: 'root@localhost'
         host: 'smtp.example.com'
         port: 25
+        starttls: false
         user: 'user'
         password: 'password'
         sender_address: 'monitoring@hostname'
