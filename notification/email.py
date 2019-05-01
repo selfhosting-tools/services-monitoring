@@ -12,6 +12,8 @@ Parameters:
         starttls: (bool) enable STARTTLS (default to True)
         user: (str or None) smtp user (or None)
         password: (str or None) smtp password (or None)
+        recipient_address: (str) recipient address
+        sender_address: (str) sender address
 
 Return:
     (bool) message was sent
