@@ -87,3 +87,18 @@ class TestMessage(unittest.TestCase):
         self.assertTrue(
             str(message) == "[Header] Service name 0: Message body"
         )
+
+    def test_repr(self):
+        """
+        Test __repr__ method
+        """
+        message = Message(
+            'Service name 0',
+            'Message body',
+            Message.ERROR
+        )
+        self.assertTrue(
+            repr(message) ==
+            "Message: service: Service name 0, body: Message body, "
+            "severity: 40, header: None"
+        )
