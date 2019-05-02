@@ -1,5 +1,6 @@
 common:
   delay: 600
+  delay_at_startup: 30
   debug: false
   email_at_startup: false
 

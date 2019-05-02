@@ -86,6 +86,12 @@ class ServicesMonitoring(threading.Thread):
             else logging.INFO
         )
 
+        # Wait for a delay at startup if configured
+        delay_startup = self.config['common'].get('delay_at_startup', 0)
+        if delay_startup > 0:
+            self.log.info("Waiting for %d before starting...", delay_startup)
+            self.exit_event.wait(delay_startup)
+
         # Disable notifications if section is not defined
         send_notification = 'notifications' in self.config
 
