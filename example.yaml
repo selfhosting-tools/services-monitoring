@@ -21,6 +21,9 @@ probes:
     - url: https://example.com
       verify_certificate: false
       check_tlsa: true
+    - url: https://example.com
+      expected_status_code: 403
+      user_agent: "bot"
 
   smtp:
     - host: mail.example.com

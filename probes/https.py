@@ -1,4 +1,4 @@
-# Author: alex2242
+# Author: alex2242 & FL42
 
 """
 This probe checks if status code is 2XX or 3XX.
@@ -37,6 +37,8 @@ def test(service):
     verify_certificate = service.get('verify_certificate', True)
     check_tlsa = service.get('check_tlsa', False)
     redirection = service.get('redirection', False)
+    expected_status_code = service.get('expected_status_code', None)
+    user_agent = service.get('user_agent', 'services-monitoring/v1')
     service_name = "[https] {}".format(url)
 
     results = []
@@ -46,7 +48,7 @@ def test(service):
             url,
             verify=verify_certificate,
             headers={
-                'user-agent': 'services-monitoring/v1'
+                'user-agent': user_agent
             },
             timeout=5
         )
@@ -68,14 +70,24 @@ def test(service):
         ))
         return results
 
-    # Fail if error code is not 2XX/3XX or TLS error
-    if not request.ok:
-        results.append(Message(
-            service_name,
-            "Request failed (status code: {})"
-            .format(request.status_code),
-            Message.ERROR
-        ))
+    if expected_status_code is not None:
+        if request.status_code != expected_status_code:
+            results.append(Message(
+                service_name,
+                "HTTP Status code different than expected (status code: {})"
+                .format(request.status_code),
+                Message.ERROR
+            ))
+
+    else:
+        # Fail if error code is not 2XX/3XX or TLS error
+        if not request.ok:
+            results.append(Message(
+                service_name,
+                "Request failed (status code: {})"
+                .format(request.status_code),
+                Message.ERROR
+            ))
 
     # Check if url redirects to another url (3XX codes)
     if redirection:
