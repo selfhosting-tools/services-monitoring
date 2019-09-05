@@ -8,6 +8,9 @@ Parameters:
     verify_certificate: (bool) check validity of SSL certificate
     check_tlsa: (bool) check validity of TLSA record
     redirection: (bool) check if url redirects to another url (3XX codes)
+    expected_status_code: (int)
+    user_agent: (str)
+    custom_headers: (dict)
 
 Return:
     List of Message objects
@@ -39,17 +42,19 @@ def test(service):
     redirection = service.get('redirection', False)
     expected_status_code = service.get('expected_status_code', None)
     user_agent = service.get('user_agent', 'services-monitoring/v1')
+    custom_headers = service.get('headers', {})
     service_name = "[https] {}".format(url)
 
     results = []
 
+    headers = {'user-agent': user_agent}
+    for header in custom_headers:
+        headers[header] = custom_headers[header]
     try:
         request = requests.get(
             url,
             verify=verify_certificate,
-            headers={
-                'user-agent': user_agent
-            },
+            headers=headers,
             timeout=5
         )
 
