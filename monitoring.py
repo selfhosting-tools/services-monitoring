@@ -136,7 +136,15 @@ class ServicesMonitoring(threading.Thread):
                 # Retry probe one time in case of error or warning
                 # to avoid notification on one-time error.
                 for _ in range(2):
-                    probes_results = probe_module.test(service)
+                    try:  # Catch unexpected exception
+                        probes_results = probe_module.test(service)
+                    except Exception as probe_exception:
+                        self.log.exception(
+                            "Exception %s in thread %s",
+                            str(probe_exception),
+                            self.config_path
+                        )
+                        probe_exception = []
                     if not probes_results:
                         break
                     self.log.info(
