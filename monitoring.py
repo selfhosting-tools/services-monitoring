@@ -17,7 +17,7 @@ import logging
 import signal
 import threading
 from sys import exit as sys_exit
-from time import sleep
+from time import time, sleep
 
 import yaml
 
@@ -64,6 +64,7 @@ class ServicesMonitoring(threading.Thread):
         # Initialize vars
         self.config_path = config_path
         self.config = None
+        self.watchdog = time()
         # Store sent messages (prevent duplicate notifications)
         self.down_services = []
         self.exit_event = threading.Event()
@@ -113,7 +114,16 @@ class ServicesMonitoring(threading.Thread):
             self.monitor(send_notification=send_notification)
             self.log.debug("Waiting...")
             self.exit_event.wait(self.config['common']['delay'])
+            self.watchdog = time()
         self.log.info("Exited")
+
+    def is_alive(self):
+        """
+        Return False if the thread has died
+        """
+        if time() - self.watchdog > self.config['common']['delay'] + 60:
+            return False
+        return True
 
     def monitor(self, send_notification):
         """

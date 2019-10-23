@@ -59,6 +59,6 @@ for config_file in listdir(config_directory):
 while True:
     for config_file in threads:
         if not threads[config_file].is_alive():
-            break
-    sleep(600)
-sys_exit(1)
+            log.error("Exiting because thread for %s is dead", config_file)
+            sys_exit(1)
+    sleep(60)
