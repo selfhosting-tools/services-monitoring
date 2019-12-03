@@ -74,15 +74,18 @@ class TestHTTPS(unittest.TestCase):
 #        result = https.test({'url': 'https://revoked.badssl.com'})
 #        self.assertTrue(len(result) > 0)
 
-    def test_https_tlsa(self):
-        """
-        Should work
-        """
-        result = https.test({
-            'url': 'https://good.dane.huque.com/',
-            'check_tlsa': True
-        })
-        self.assertEqual(len(result), 0)
+
+# TODO: should be mocked
+#    def test_https_tlsa(self):
+#        """
+#        Should work
+#        """
+#        result = https.test({
+#            'url': 'https://good.dane.huque.com/',
+#            'check_tlsa': True
+#        })
+#        self.assertEqual(len(result), 0)
+
 
     def test_https_invalid_tlsa(self):
         """

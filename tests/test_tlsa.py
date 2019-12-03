@@ -12,17 +12,20 @@ class TestTLSA(unittest.TestCase):
     See module docstring
     """
 
-    def test_good_tlsa(self):
-        """
-        Good TLSA (cert matching)
-        """
-        hostname = "good.dane.huque.com"
-        cert = tls.get_certificate(hostname)
 
-        tlsa_checker = TLSA("test")
-        results = tlsa_checker.check_tlsa(hostname, 443, cert)
+# TODO: Should be mocked
+#    def test_good_tlsa(self):
+#        """
+#        Good TLSA (cert matching)
+#        """
+#        hostname = "good.dane.huque.com"
+#        cert = tls.get_certificate(hostname)
+#
+#        tlsa_checker = TLSA("test")
+#        results = tlsa_checker.check_tlsa(hostname, 443, cert)
+#
+#        self.assertEqual(len(results), 0)
 
-        self.assertEqual(len(results), 0)
 
 # TODO: Not yet supported
 #    def test_good_ca_tlsa(self):
