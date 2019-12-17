@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/selfhosting-tools/services-monitoring.svg?branch=master)](https://travis-ci.org/selfhosting-tools/services-monitoring)
 [![codecov](https://codecov.io/gh/selfhosting-tools/services-monitoring/branch/master/graph/badge.svg)](https://codecov.io/gh/selfhosting-tools/services-monitoring)
+[![Project Status: Concept  Minimal or no implementation has been done yet, or the repository is only intended to be a limited example, demo, or proof-of-concept.](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
 
 
 Python-based tool for monitoring the status of various services.
