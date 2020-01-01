@@ -5,6 +5,7 @@ python:
   - "3.5"
   - "3.6"
   - "3.7"
+  - "3.8"
 
 services:
   - docker
@@ -25,9 +26,11 @@ script:
   - coverage run -m unittest discover
   - codecov
 
-after_success:
-  - echo $DOCKER_PASS | docker login -u selfhostingtools --password-stdin
-  - docker push selfhostingtools/services-monitoring:latest
+deploy:
+  provider: script
+  script: echo $DOCKER_PASS | docker login -u selfhostingtools --password-stdin && docker push selfhostingtools/services-monitoring:latest
+  on:
+    branch: master
 
 notifications:
   email:
