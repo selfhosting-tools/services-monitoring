@@ -28,3 +28,7 @@ script:
 after_success:
   - echo $DOCKER_PASS | docker login -u selfhostingtools --password-stdin
   - docker push selfhostingtools/services-monitoring:latest
+
+notifications:
+  email:
+    - secure: "VB4sUmFjolWckXmrddElKs8M7hn7hu3YoPCkQhw7piVnJ8aL+6SvQWgmOvVCtBoEUlRt0nUvJHuaq+7XqW0k1r/Mu5o5lMqnuZht2YU7vE/bRCsdalY07uWB21JFl/a+wLL3Nks9HM5x10Ui5QObHWyHUiOo73MZEDaXhZKge3HSJnsqzQ8rb6Y4q2SEGMcaseRWIf4EXoNKIgr+M/ICh2BgbaxyjJm4GZ8X2GAj6Iv+jNdF6dLMfJyjHf7yLuU7dG9jZqwD6Gkci+tj3bPyTBVMSGNLDuU/E9vXsMJN6KT4KdUD683TNSUL1Zzu/h9aGO0Sn17iCemFT+k7TeozBZxVa3mPZNlk+McAD38eZoa3rR1l1s/OTEJEAWX0kjA251YU9VwUrng3Ihv41BjqotFJ01KknmTXqL/3cRkGaDZ6U2kpYejhbyQEXqwbZPlWqqUYtS6W7bpe9UmQV16AtTjabA2iQsvrYEqiDcoKaa+LtdXvXexFyD22ekVDGGLUbJPpiiN9wXh5RPFLMUPU60bS/OftCh7y9NupyKTrKH9nhJ8AzMw74+iSnfh9BxtHZR6h4uNj8BmPAzfVtZ0+4aKhVZZaRKVR/FE6p7nC2wFgOvsw2okf132Rrg/lRMuKFe0kuW9PTlCE1UQwYyzrquip5Amn3bzxM5ejkV1Sl10="
