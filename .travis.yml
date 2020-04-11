@@ -20,7 +20,7 @@ install:
   - docker run -it --rm selfhostingtools/services-monitoring:latest | grep -q "No config found"
 
 script:
-  - pytest -v --cov-report=xml --cov=src
+  - pytest
   - codecov
 
 deploy:
