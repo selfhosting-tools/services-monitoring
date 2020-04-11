@@ -5,9 +5,9 @@ services:
   services-monitoring:
     container_name: services-monitoring
     restart: always
-    build:
-      context: services-monitoring
-      dockerfile: docker/Dockerfile
-    image: services-monitoring:latest
+    image: selfhostingtools/services-monitoring:latest
+    read_only: true
+    environment:
+      - TZ=Europe/Paris
     volumes:
       - ./config:/config:ro

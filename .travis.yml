@@ -14,15 +14,13 @@ cache:
 
 install:
   - pip install -r requirements.txt
-  - pip install pylint pycodestyle coverage codecov # requirements only for CI
+  - pip install -r requirements-dev.txt
+  - pip install codecov
   - docker build -t selfhostingtools/services-monitoring:latest -f docker/Dockerfile .
+  - docker run -it --rm selfhostingtools/services-monitoring:latest | grep -q "No config found"
 
 script:
-  - pylint --rcfile=.pylintrc monitoring.py docker/entrypoint.py tools notification probes tests
-  - pycodestyle monitoring.py docker/entrypoint.py tools notification probes tests
-  - python -m unittest discover tests -v
-  - docker run --rm -it --entrypoint python selfhostingtools/services-monitoring:latest -m unittest discover tests -v
-  - coverage run -m unittest discover
+  - pytest -v --cov-report=xml --cov=src
   - codecov
 
 deploy:

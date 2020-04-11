@@ -5,7 +5,7 @@ Docker entrypoint
 import logging
 import signal
 from os import listdir
-from os.path import join
+from os.path import isdir, join
 from sys import exit as sys_exit
 from time import sleep
 
@@ -42,6 +42,12 @@ def exit_gracefully(sigcode, _frame):
 # Handle signals
 signal.signal(signal.SIGINT, exit_gracefully)
 signal.signal(signal.SIGTERM, exit_gracefully)  # issued by docker stop
+
+
+# Check for config dir
+if not isdir(config_directory):
+    log.fatal("No config found")
+    sys_exit(2)
 
 
 # Create threads
