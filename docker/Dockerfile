@@ -14,6 +14,4 @@ WORKDIR /services-monitoring
 
 ENV PYTHONPATH /services-monitoring
 
-USER nobody
-
 ENTRYPOINT ["python" ,"-u", "entrypoint.py"]
