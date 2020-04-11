@@ -9,7 +9,7 @@ from os.path import join
 from sys import exit as sys_exit
 from time import sleep
 
-from monitoring import ServicesMonitoring
+from src.monitoring import ServicesMonitoring
 
 config_directory = '/config'
 

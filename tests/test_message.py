@@ -5,7 +5,7 @@ Tests for the message module
 """
 
 import unittest
-from tools import Message
+from src.tools import Message
 
 
 class TestMessage(unittest.TestCase):

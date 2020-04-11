@@ -20,7 +20,7 @@ from re import match
 
 import OpenSSL.crypto
 
-from tools import TLSA, Message
+from src.tools import TLSA, Message
 
 log = logging.getLogger(__name__)
 

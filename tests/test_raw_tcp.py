@@ -5,7 +5,7 @@ Tests for the raw_tcp probe
 """
 
 import unittest
-from probes import raw_tcp
+from src.probes import raw_tcp
 
 
 class TestRawTCP(unittest.TestCase):

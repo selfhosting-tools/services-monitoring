@@ -6,8 +6,8 @@ Tests for main file
 
 import unittest
 
-from monitoring import ServicesMonitoring
-from tools import Message
+from src.monitoring import ServicesMonitoring
+from src.tools import Message
 
 
 class TestNotificationManagementLogic(unittest.TestCase):

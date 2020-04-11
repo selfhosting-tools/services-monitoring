@@ -5,7 +5,7 @@ Tests for the https probe
 """
 
 import unittest
-from probes import https
+from src.probes import https
 
 
 class TestHTTPS(unittest.TestCase):

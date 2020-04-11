@@ -5,7 +5,7 @@ Tests for the ping probe
 """
 
 import unittest
-from probes import ping
+from src.probes import ping
 
 
 class TestPing(unittest.TestCase):

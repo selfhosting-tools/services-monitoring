@@ -4,7 +4,7 @@ Tests for the tlsa tool
 
 import unittest
 
-from tools import TLSA, tls
+from src.tools import TLSA, tls
 
 
 class TestTLSA(unittest.TestCase):

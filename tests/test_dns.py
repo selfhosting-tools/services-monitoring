@@ -5,7 +5,7 @@ Tests for the dns probe
 """
 
 import unittest
-from probes import dns
+from src.probes import dns
 
 
 class TestDNS(unittest.TestCase):

@@ -21,9 +21,9 @@ from time import time, sleep
 
 import yaml
 
-from notification import email
-from probes import dns, https, ping, raw_tcp, smtp
-from tools import Message
+from src.notification import email
+from src.probes import dns, https, ping, raw_tcp, smtp
+from src.tools import Message
 
 version = "0.1"
 

@@ -5,7 +5,7 @@ Tests for the smtp probe
 """
 
 import unittest
-from probes import smtp
+from src.probes import smtp
 
 
 class Testsmtp(unittest.TestCase):

@@ -11,7 +11,7 @@ import logging
 import dns.resolver
 import OpenSSL.crypto
 
-from tools.message import Message
+from src.tools.message import Message
 
 log = logging.getLogger(__name__)
 
