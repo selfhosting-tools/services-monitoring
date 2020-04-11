@@ -117,7 +117,7 @@ class ServicesMonitoring(threading.Thread):
             self.watchdog = time()
         self.log.info("Exited")
 
-    def is_alive(self):
+    def watchdog_is_alive(self):
         """
         Return False if the thread has died
         """

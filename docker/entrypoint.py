@@ -5,7 +5,7 @@ Docker entrypoint
 import logging
 import signal
 from os import listdir
-from os.path import isdir, join
+from os.path import join, isdir
 from sys import exit as sys_exit
 from time import sleep
 
@@ -64,7 +64,8 @@ for config_file in listdir(config_directory):
 # Check that all threads are running, else exit with error
 while True:
     for config_file in threads:
-        if not threads[config_file].is_alive():
+        if not threads[config_file].watchdog_is_alive():
             log.error("Exiting because thread for %s is dead", config_file)
+            exit_gracefully(15, None)
             sys_exit(1)
-    sleep(60)
+    sleep(30)
