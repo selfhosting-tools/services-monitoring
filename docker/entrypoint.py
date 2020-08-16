@@ -57,6 +57,7 @@ for config_file in listdir(config_directory):
     if isfile(config_path) and config_path.endswith(".yaml"):
         log.info("Starting thread for %s...", config_path)
         threads[config_file] = ServicesMonitoring(config_path)
+        threads[config_file].daemon = True
         threads[config_file].start()
         log.info("Thread started")
         sleep(5)  # Sleep 5s to avoid mixed logs
