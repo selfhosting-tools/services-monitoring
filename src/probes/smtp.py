@@ -40,7 +40,7 @@ def test(service):
 
     # Fetch certificate
     try:
-        connection = smtplib.SMTP('{}:{}'.format(host, port), timeout=2)
+        connection = smtplib.SMTP('{}:{}'.format(host, port), timeout=10)
         connection.starttls()
     except Exception as connection_exception:
         results.append(Message(
