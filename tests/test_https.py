@@ -100,3 +100,23 @@ class TestHTTPS(unittest.TestCase):
             'check_tlsa': False
         })
         self.assertEqual(len(result), 0)
+
+    def test_https_matching_pattern(self):
+        """
+        Matching pattern
+        """
+        result = https.test({
+            'url': 'https://google.com',
+            'pattern': 'google'
+        })
+        self.assertEqual(len(result), 0)
+
+    def test_https_not_matching_pattern(self):
+        """
+        Matching pattern
+        """
+        result = https.test({
+            'url': 'https://google.com',
+            'pattern': 'iQglsUw1STshWOGlk1wt'
+        })
+        self.assertEqual(len(result), 1)

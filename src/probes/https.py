@@ -11,6 +11,7 @@ Parameters:
     expected_status_code: (int)
     user_agent: (str)
     custom_headers: (dict)
+    pattern: (raw str) source code of the page must match this pattern
 
 Return:
     List of Message objects
@@ -18,6 +19,7 @@ Return:
 """
 
 import logging
+import re
 from datetime import datetime, timedelta
 
 import requests
@@ -43,6 +45,7 @@ def test(service):
     expected_status_code = service.get('expected_status_code', None)
     user_agent = service.get('user_agent', 'services-monitoring/v1')
     custom_headers = service.get('headers', {})
+    pattern = service.get('pattern', None)
     service_name = "[https] {}".format(url)
 
     results = []
@@ -101,6 +104,15 @@ def test(service):
             results.append(Message(
                 service_name,
                 "Not a redirection",
+                Message.ERROR
+            ))
+
+    # Check regex
+    if pattern:
+        if not re.search(pattern, request.text):
+            results.append(Message(
+                service_name,
+                f"Does not match pattern '{pattern}'",
                 Message.ERROR
             ))
 
