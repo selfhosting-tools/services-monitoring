@@ -21,7 +21,7 @@ def test(host):
     See module docstring
     """
     returncode = subprocess.call(
-        ["ping", "-c", "1", "-W", "1", host],
+        ["ping", "-c", "3", "-W", "3", host],
         stdout=subprocess.DEVNULL
     )
     if returncode == 1:
