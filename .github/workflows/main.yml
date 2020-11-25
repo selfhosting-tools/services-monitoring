@@ -1,0 +1,33 @@
+name: main
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup tests
+      run: |
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install codecov
+    - name: Run tests
+      run: |
+        pytest
+        codecov
+    - uses: docker/build-push-action@v1.1.0
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: selfhostingtools/services-monitoring
+        tags: latest
+    - uses: docker/build-push-action@v1.1.0
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        repository: selfhosting-tools/services-monitoring/services-monitoring
+        tags: latest
