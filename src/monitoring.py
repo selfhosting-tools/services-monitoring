@@ -180,9 +180,9 @@ class ServicesMonitoring(threading.Thread):
                 else:
                     target = service
 
-                # Retry probe one time in case of error or warning
+                # Retry probe 2 times in case of error or warning
                 # to avoid notification on one-time error.
-                for _ in range(2):
+                for _ in range(3):
                     try:  # Catch unexpected exception
                         start_time = time()
                         probes_results = probe_module.test(service)
