@@ -2,3 +2,4 @@ dnspython
 pyOpenSSL
 pyYAML
 requests
+prometheus_client

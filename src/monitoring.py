@@ -11,21 +11,29 @@ optional arguments:
   -c CONFIG, --config CONFIG
                         Path to config file
 """
-
 import argparse
 import logging
 import signal
 import threading
 from sys import exit as sys_exit
-from time import time, sleep
+from time import sleep, time
 
 import yaml
+from prometheus_client import Counter, start_http_server
 
 from src.notification import email
 from src.probes import dns, https, ping, raw_tcp, smtp
 from src.tools import Message
 
 version = "0.1"
+
+
+probe_success_total = Counter(
+    "probe_success_total", "Number of successful probes", ("probe", "target")
+)
+probe_failures_total = Counter(
+    "probe_failures_total", "Number of failed probes", ("probe", "target")
+)
 
 
 class ServicesMonitoring(threading.Thread):
@@ -35,11 +43,26 @@ class ServicesMonitoring(threading.Thread):
 
     # Mapping between strings and python modules
     probe_mapping = {
-        'ping': ping,
-        'raw_tcp': raw_tcp,
-        'smtp': smtp,
-        'https': https,
-        'dns': dns
+        'ping': {
+            "module": ping,
+            "target_type": None
+        },
+        'raw_tcp': {
+            "module": raw_tcp,
+            "target_type": "host"
+        },
+        'smtp': {
+            "module": smtp,
+            "target_type": "host"
+        },
+        'https': {
+            "module": https,
+            "target_type": "url"
+        },
+        'dns': {
+            "module": dns,
+            "target_type": "domain"
+        }
     }
 
     def __init__(self, config_path):
@@ -109,6 +132,9 @@ class ServicesMonitoring(threading.Thread):
                 smtp_config=self.config['notifications']['email']['config']
             )
 
+        # Start web server for prometheus metrics
+        start_http_server(8000)
+
         # Call self.monitor every 'delay' sec
         while not self.exit_event.is_set():
             self.monitor(send_notification=send_notification)
@@ -140,9 +166,17 @@ class ServicesMonitoring(threading.Thread):
         probe_names = config_probes.keys()
 
         for probe_name in probe_names:
-            probe_module = ServicesMonitoring.probe_mapping[probe_name]
+            probe_module = ServicesMonitoring.probe_mapping[probe_name]["module"]
+            target_type = ServicesMonitoring.probe_mapping[probe_name]["target_type"]
             for service in config_probes[probe_name]:
                 self.log.debug("%s probe for %s", probe_name, str(service))
+
+                # Target refers to the target of the probe (the host, the url, etc)
+                if target_type:
+                    target = service.get(target_type)
+                else:
+                    target = service
+
                 # Retry probe one time in case of error or warning
                 # to avoid notification on one-time error.
                 for _ in range(2):
@@ -154,9 +188,26 @@ class ServicesMonitoring(threading.Thread):
                             str(probe_exception),
                             self.config_path
                         )
-                        probe_exception = []
+                        probes_results = [
+                            Message(
+                                probe_name,
+                                "Exception: {}".format(probe_exception),
+                                Message.ERROR
+                            )
+                        ]
+
                     if not probes_results:
+                        probe_success_total.labels(
+                            probe=probe_name,
+                            target=target
+                        ).inc()
                         break
+
+                    probe_failures_total.labels(
+                        probe=probe_name,
+                        target=target
+                    ).inc()
+
                     self.log.info(
                         "%s probe for %s returns %s",
                         probe_name,
@@ -164,6 +215,7 @@ class ServicesMonitoring(threading.Thread):
                         str(probes_results)
                     )
                     sleep(1)
+
                 notifications += probes_results
 
         # Sort notifications by severity

@@ -14,4 +14,6 @@ WORKDIR /services-monitoring
 
 ENV PYTHONPATH /services-monitoring
 
+EXPOSE 8000
+
 ENTRYPOINT ["python" ,"-u", "entrypoint.py"]
