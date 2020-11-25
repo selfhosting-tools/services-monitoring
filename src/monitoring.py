@@ -19,7 +19,7 @@ from sys import exit as sys_exit
 from time import sleep, time
 
 import yaml
-from prometheus_client import Counter, start_http_server
+from prometheus_client import Counter, Gauge, start_http_server
 
 from src.notification import email
 from src.probes import dns, https, ping, raw_tcp, smtp
@@ -33,6 +33,9 @@ probe_success_total = Counter(
 )
 probe_failures_total = Counter(
     "probe_failures_total", "Number of failed probes", ("probe", "target")
+)
+probe_duration = Gauge(
+    "probe_duration", "Duration of the probe", ("probe", "target")
 )
 
 
@@ -181,7 +184,12 @@ class ServicesMonitoring(threading.Thread):
                 # to avoid notification on one-time error.
                 for _ in range(2):
                     try:  # Catch unexpected exception
+                        start_time = time()
                         probes_results = probe_module.test(service)
+                        probe_duration.labels(
+                            probe=probe_name,
+                            target=target
+                        ).set(time() - start_time)
                     except Exception as probe_exception:
                         self.log.exception(
                             "Exception %s in thread %s",
