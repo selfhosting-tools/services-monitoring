@@ -183,10 +183,11 @@ class ServicesMonitoring(threading.Thread):
                     try:  # Catch unexpected exception
                         start_time = time()
                         probes_results = probe_module.test(service)
-                        probe_duration.labels(
-                            probe=probe_name,
-                            target=target
-                        ).set(time() - start_time)
+                        if not probes_results:
+                            probe_duration.labels(
+                                probe=probe_name,
+                                target=target
+                            ).set(time() - start_time)
                     except Exception as probe_exception:
                         self.log.exception(
                             "Exception %s in thread %s",
@@ -208,11 +209,6 @@ class ServicesMonitoring(threading.Thread):
                         ).inc()
                         break
 
-                    probe_failures_total.labels(
-                        probe=probe_name,
-                        target=target
-                    ).inc()
-
                     self.log.info(
                         "%s probe for %s returns %s",
                         probe_name,
@@ -220,6 +216,12 @@ class ServicesMonitoring(threading.Thread):
                         str(probes_results)
                     )
                     sleep(1)
+
+                if probes_results:
+                    probe_failures_total.labels(
+                        probe=probe_name,
+                        target=target
+                    ).inc()
 
                 notifications += probes_results
 
