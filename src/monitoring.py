@@ -19,7 +19,7 @@ from sys import exit as sys_exit
 from time import sleep, time
 
 import yaml
-from prometheus_client import Counter, Gauge, start_http_server
+from prometheus_client import Counter, Gauge
 
 from src.notification import email
 from src.probes import dns, https, ping, raw_tcp, smtp
@@ -134,9 +134,6 @@ class ServicesMonitoring(threading.Thread):
                 body="This is a message sent at startup",
                 smtp_config=self.config['notifications']['email']['config']
             )
-
-        # Start web server for prometheus metrics
-        start_http_server(8000)
 
         # Call self.monitor every 'delay' sec
         while not self.exit_event.is_set():

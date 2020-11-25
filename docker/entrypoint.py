@@ -9,6 +9,7 @@ from os.path import isdir, isfile, join
 from sys import exit as sys_exit
 from time import sleep
 
+from prometheus_client import Counter, Gauge, start_http_server
 from src.monitoring import ServicesMonitoring
 
 config_directory = '/config'
@@ -49,6 +50,8 @@ if not isdir(config_directory):
     log.fatal("No config found")
     sys_exit(2)
 
+# Start web server for prometheus metrics
+start_http_server(8000)
 
 # Create threads
 threads = {}  # key is path to config file, value is Thread object
