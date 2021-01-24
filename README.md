@@ -1,9 +1,10 @@
 # Services monitoring
 
-[![Build Status](https://travis-ci.org/selfhosting-tools/services-monitoring.svg?branch=master)](https://travis-ci.org/selfhosting-tools/services-monitoring)
-[![codecov](https://codecov.io/gh/selfhosting-tools/services-monitoring/branch/master/graph/badge.svg)](https://codecov.io/gh/selfhosting-tools/services-monitoring)
-[![Project Status: Concept  Minimal or no implementation has been done yet, or the repository is only intended to be a limited example, demo, or proof-of-concept.](https://www.repostatus.org/badges/latest/concept.svg)](https://www.repostatus.org/#concept)
+[![Project Status: Abandoned – Initial development has started, but there has not yet been a stable, usable release; the project has been abandoned and the author(s) do not intend on continuing development.](https://www.repostatus.org/badges/latest/abandoned.svg)](https://www.repostatus.org/#abandoned)
 
+:warning: **This tool is no longer maintained**
+
+You may want to have a look to [go-monitoring](https://github.com/the-kube-way/go-monitoring/) for an alternative.
 
 Python-based tool for monitoring the status of various services.
 

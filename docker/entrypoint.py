@@ -27,6 +27,9 @@ stream_handler.setFormatter(
 )
 log.addHandler(stream_handler)
 
+# Depreciation notice
+log.warning("*** This tool is no longer maintained ***")
+
 
 # Stop threads and exit
 def exit_gracefully(sigcode, _frame):
